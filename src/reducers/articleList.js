@@ -37,7 +37,7 @@ export default (state = {}, action) => {
         currentPage: action.page
       };
     case APPLY_TAG_FILTER:
-      console.log("in reducer : ",  action.payload);
+      console.log("in reducer : ", action.payload);
       return {
         ...state,
         pager: action.pager,
@@ -45,6 +45,7 @@ export default (state = {}, action) => {
         articlesCount: action.payload.length,
         tab: null,
         tag: action.tag,
+        city: action.city,
         currentPage: 0
       };
     case HOME_PAGE_LOADED:
@@ -55,6 +56,8 @@ export default (state = {}, action) => {
         articles: [],//action.payload[1].articles,
         articlesCount: 0,//action.payload[1].articlesCount,
         currentPage: 0,
+        tag: 'BED',
+        city: {value: "PUNE", label: "PUNE"},
         tab: action.tab
       };
     case HOME_PAGE_UNLOADED:

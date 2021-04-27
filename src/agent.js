@@ -4,7 +4,7 @@ import _superagent from 'superagent';
 const superagent = superagentPromise(_superagent, global.Promise);
 
 const API_ROOT = 'https://conduit.productionready.io/api';//'http://localost:8080/';
-const COVID_API_ROOT = 'http://localhost:8080'
+const COVID_API_ROOT = 'http://wewillwin.co.in:8080'
 //'https://conduit.productionready.io/api';
 
 const encode = encodeURIComponent;
@@ -43,9 +43,14 @@ const Auth = {
 
 const Tags = {
   getAll: () => {
-    var response = requests.get('/tags');
-    console.log("tag response : ", response);
-    return response;
+    // var response = requests.get('/tags');
+    // console.log("tag response : ", response);
+    // return response;
+    return ["BED", "OXYGEN", "MEDICINE","PLASMA"];
+    // return [{"id":"false_919096051254@c.us_CC0094EDC69DBD57391B596E8643E0A5","body”:”Msg1,”type":"chat","author":"919096051254@c.us","chatId":"919096051254@c.us","fromMe":false,"time":1619500743,"chatIdMobileNumber":"919096051254"},{"id":"false_919096051254@c.us_B4B96C37894FA7BBF420B19C33FBBC15","body”:”Msg2”,”type":"chat","author":"919096051254@c.us","chatId":"919096051254@c.us","fromMe":false,"time":1619500708,"chatIdMobileNumber":"919096051254"},{"id":"false_919096051254@c.us_C13933CC78035923E59579106F1D1011","body”:”M”sg3,”type":"chat","author":"919096051254@c.us","chatId":"919096051254@c.us","fromMe":false,"time":1619500703,"chatIdMobileNumber":"919096051254"}];
+  },
+  getAllBeds: () => {
+    requests.getResponse(`/getResponse?city=PUNE&category=BED`)
   }
 };
 
@@ -56,8 +61,10 @@ const Articles = {
     requests.get(`/articles?${limit(10, page)}`),
   byAuthor: (author, page) =>
     requests.get(`/articles?author=${encode(author)}&${limit(5, page)}`),
-  byTag: (tag, page) =>
-    requests.getResponse(`/getResponse?city=PUNE&category=${encode(tag)}`),
+  byTag: (tag, city, page) =>
+    requests.getResponse(`/getResponse?city=${encode(city)}&category=${encode(tag)}`),
+  // byCity: (city, page) =>
+  //   requests.getResponse(`/getResponse?city=${city}&category=${encode(tag)}`),
   del: slug =>
     requests.del(`/articles/${slug}`),
   favorite: slug =>

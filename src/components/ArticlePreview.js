@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import agent from '../agent';
 import { connect } from 'react-redux';
 import { ARTICLE_FAVORITED, ARTICLE_UNFAVORITED } from '../constants/actionTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee, faUser } from '@fortawesome/free-solid-svg-icons'
 
 const FAVORITED_CLASS = 'btn btn-sm btn-primary';
 const NOT_FAVORITED_CLASS = 'btn btn-sm btn-outline-primary';
@@ -41,7 +43,10 @@ const ArticlePreview = props => {
     <div className="article-preview">
       <div className="article-meta">
         <Link to={`/@${article.author.username}`}>
-          <img src={article.author.image} alt={article.author.username} />
+          {
+            (article.author && article.author.image) ? <img src={article.author.image} alt={article.author.username} /> : <FontAwesomeIcon icon={faUser} />
+          }
+          
         </Link>
         
         <div className="info">

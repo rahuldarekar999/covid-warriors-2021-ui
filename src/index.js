@@ -8,6 +8,10 @@ import { ConnectedRouter } from 'react-router-redux';
 
 import App from './components/App';
 
+// import 'bootstrap';
+import './assets/index.css';
+// import 'react-select-2/dist/css/react-select-2.css';
+
 ReactDOM.render((
   <Provider store={store}>
     <ConnectedRouter history={history}>

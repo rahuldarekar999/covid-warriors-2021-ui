@@ -4,27 +4,21 @@ import { Link } from 'react-router-dom';
 const LoggedOutView = props => {
   if (!props.currentUser) {
     return (
-      <ul className="nav navbar-nav pull-xs-right">
 
+      <ul className="nav navbar-nav pull-xs-right">
         <li className="nav-item">
           <Link to="/" className="nav-link">
             Home
           </Link>
         </li>
-
         <li className="nav-item">
           <Link to="/login" className="nav-link">
             Sign in
           </Link>
         </li>
-      {/*
-        <li className="nav-item">
-          <Link to="/register" className="nav-link">
-            Sign up
-          </Link>
-        </li>
-  */}
       </ul>
+
+
     );
   }
   return null;
@@ -72,18 +66,55 @@ const LoggedInView = props => {
 class Header extends React.Component {
   render() {
     return (
-      <nav className="navbar navbar-light">
-        <div className="container">
+      // <nav className="navbar navbar-light">
+      //   <div className="container">
 
-          <Link to="/" className="navbar-brand">
-            {this.props.appName.toLowerCase()}
-          </Link>
+      //     <Link to="/" className="navbar-brand">
+      //       {this.props.appName.toLowerCase()}
+      //     </Link>
 
-          <LoggedOutView currentUser={this.props.currentUser} />
+      //     <LoggedOutView currentUser={this.props.currentUser} />
 
-          <LoggedInView currentUser={this.props.currentUser} />
+      //     <LoggedInView currentUser={this.props.currentUser} />
+      //   </div>
+      // </nav>
+<header className={'container'}>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <a className="navbar-brand" href="#">Covid Warriors</a>
+        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul className="navbar-nav ml-auto">
+            <li className="nav-item active">
+              <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="#">Sign In</a>
+            </li>
+            {/* <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Dropdown
+        </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li> */}
+          </ul>
+          {/* <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form> */}
         </div>
       </nav>
+      </header>
     );
   }
 }
