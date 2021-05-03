@@ -1,11 +1,13 @@
 import superagentPromise from 'superagent-promise';
 import _superagent from 'superagent';
+import request from 'superagent';
 
 const superagent = superagentPromise(_superagent, global.Promise);
 
 const API_ROOT = 'https://conduit.productionready.io/api';//'http://localost:8080/';
-const COVID_API_ROOT = 'http://wewillwin.co.in:8080'
-//'https://conduit.productionready.io/api';
+// const COVID_API_ROOT = '';
+const COVID_API_ROOT = 'http://13.233.159.149:8080';
+// 'https://conduit.productionready.io/api';
 
 const encode = encodeURIComponent;
 const responseBody = res => res.body;
@@ -27,7 +29,7 @@ const requests = {
   put: (url, body) =>
     superagent.put(`${API_ROOT}${url}`, body).use(tokenPlugin).then(responseBody),
   post: (url, body) =>
-    superagent.post(`${API_ROOT}${url}`, body).use(tokenPlugin).then(responseBody)
+    superagent.post(`${COVID_API_ROOT}${url}`, body).use(tokenPlugin).then(responseBody)
 };
 
 const Auth = {
@@ -46,11 +48,30 @@ const Tags = {
     // var response = requests.get('/tags');
     // console.log("tag response : ", response);
     // return response;
-    return ["BED", "OXYGEN", "MEDICINE","PLASMA"];
+    return requests.getResponse(`/getCategory`)
+    // return ["BED", "OXYGEN", "MEDICINE","PLASMA"];
     // return [{"id":"false_919096051254@c.us_CC0094EDC69DBD57391B596E8643E0A5","body”:”Msg1,”type":"chat","author":"919096051254@c.us","chatId":"919096051254@c.us","fromMe":false,"time":1619500743,"chatIdMobileNumber":"919096051254"},{"id":"false_919096051254@c.us_B4B96C37894FA7BBF420B19C33FBBC15","body”:”Msg2”,”type":"chat","author":"919096051254@c.us","chatId":"919096051254@c.us","fromMe":false,"time":1619500708,"chatIdMobileNumber":"919096051254"},{"id":"false_919096051254@c.us_C13933CC78035923E59579106F1D1011","body”:”M”sg3,”type":"chat","author":"919096051254@c.us","chatId":"919096051254@c.us","fromMe":false,"time":1619500703,"chatIdMobileNumber":"919096051254"}];
   },
+  getRefreshTime: () => {
+    return requests.getResponse(`/minTime`)
+  },
+  getCities: () => {
+    // console.log("I am returning city")
+    return requests.getResponse(`/getCity`)
+    // return [{ value: 'HYDERABAD', label: 'HYDERABAD' },
+    // { value: 'SONIPAT', label: 'SONIPAT' },
+    // { value: 'JABALPUR', label: 'JABALPUR' },
+    // { value: 'OTHER', label: 'OTHER' }];
+  },
   getAllBeds: () => {
-    requests.getResponse(`/getResponse?city=PUNE&category=BED`)
+    requests.getResponse(`/getResponse?city=HYDERABAD&category=BED`)
+    // requests.getResponse(`/getArt?c=HYDERABAD&cat=BED`)
+  },
+  sendSMS: (data) => {
+    return requests.post('/sendMessageCustom', data)
+  },
+  getMessages: (category) => {
+    return requests.getResponse(`/getMessage?category=${category}`)
   }
 };
 
@@ -63,8 +84,7 @@ const Articles = {
     requests.get(`/articles?author=${encode(author)}&${limit(5, page)}`),
   byTag: (tag, city, page) =>
     requests.getResponse(`/getResponse?city=${encode(city)}&category=${encode(tag)}`),
-  // byCity: (city, page) =>
-  //   requests.getResponse(`/getResponse?city=${city}&category=${encode(tag)}`),
+  // requests.getResponse(`/getArt?c=${encode(city)}&cat=${encode(tag)}`),
   del: slug =>
     requests.del(`/articles/${slug}`),
   favorite: slug =>

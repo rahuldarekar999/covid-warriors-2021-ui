@@ -29,8 +29,13 @@ const mapDispatchToProps = dispatch => ({
   //   dispatch({ type: APPLY_CITY_FILTER, optionValue, page, payload })
   // },
   // dispatch({ type: APPLY_TAG_FILTER, tag, pager, payload }),
+  // loadCity: () => 
+  //   dispatch({ type: CIT, tab, pager, payload }),
   onLoad: (tab, pager, payload) =>
     dispatch({ type: HOME_PAGE_LOADED, tab, pager, payload }),
+
+  // onValidResponse: () => 
+  //   dispatch({type:VALID_RESPONSE , payload})
   onUnload: () =>
     dispatch({ type: HOME_PAGE_UNLOADED })
 });
@@ -44,10 +49,21 @@ class Home extends React.Component {
     const articlesPromise = this.props.token ?
       agent.Articles.feed :
       agent.Articles.all;
-    console.log("I am the response to be made so the code is ghere :L:::");
-    this.props.onLoad(tab, articlesPromise, Promise.all([agent.Tags.getAll()]));
-    // agent.Articles.byTag('BED', 'PUNE')
-    this.props.onClickTag('BED', {value: "PUNE", label: "PUNE"}, page => agent.Articles.byTag('BED', 'PUNE', page), agent.Articles.byTag('BED', 'PUNE'));
+    // console.log("I am the response to be made so the code is ghere :L:::");
+    this.props.onLoad(tab, articlesPromise, Promise.all([agent.Tags.getAll(), agent.Tags.getCities(), agent.Tags.getRefreshTime()]));
+    // agent.Articles.byTag('BED', 'HYDERABAD')
+
+
+    // Promise.resolve(agent.Articles.byTag('BED', 'HYDERABAD')).then(function(value){
+    //   console.log("I am the success in the form of some result???????????????????????????", value)
+    //   // if(value===null){
+    //   //   alert("Successfully sent SMS");
+    //   // }
+    // })
+
+
+
+    this.props.onClickTag('BED', {value: "HYDERABAD", label: "HYDERABAD"}, page => agent.Articles.byTag('BED', 'HYDERABAD', page), agent.Articles.byTag('BED', 'HYDERABAD'));
     // this.props.onLoad(tab, articlesPromise, Promise.all([agent.Tags.getAllBeds()]))
 
   }
@@ -60,12 +76,17 @@ class Home extends React.Component {
     return (
       <div className="home-page">
 
-        <Banner token={this.props.token} appName={this.props.appName} />
+        {/* <Banner token={this.props.token} appName={this.props.appName} /> */}
 
-        <div className="container page mt-5">
+        <div className="container page mt-2">
           <div className="row">
-            <MainView tags={this.props.tags}
-              onClickTag={this.props.onClickTag} changeCity={this.props.changeCity} />
+            <MainView 
+
+            tags={this.props.tags}
+              onClickTag={this.props.onClickTag} 
+              changeCity={this.props.changeCity} 
+
+              />
 
             {/* <div className="col-md-3">
               <div className="sidebar">

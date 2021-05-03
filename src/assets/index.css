@@ -1,5 +1,5 @@
 body{
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin:0;
     padding:0;
 }
@@ -8,7 +8,7 @@ body{
     background: rgb(75,68,102);
     background: radial-gradient(circle, rgba(75,68,102,1) 0%, rgba(81,115,129,1) 30%, rgba(144,119,138,1) 81%, rgba(107,131,155,1) 100%);
     /*box-shadow:inset 0 8px 8px -8px rgba(0,0,0,.3),inset 0 -8px 8px -8px rgba(0,0,0,.3)*/
-    padding: 60px 0;
+    padding: 30px 0 10px;
 }
 .home-page .banner p{color:#fff;text-align:center;font-size:1.5rem;font-weight:300!important;margin-bottom:0}
 .home-page .banner h1{font-weight:100!important;text-align:center;font-size:5.5rem;padding-bottom:.5rem;color:#ffffff;}
@@ -71,8 +71,9 @@ footer .attribution{vertical-align:middle;margin-left:10px;font-size:.8rem;color
 .article-meta .info{margin:0 1.5rem 0 .3rem;display:inline-block;vertical-align:middle;line-height:1rem}
 .article-meta .info .author{display:block;font-weight:500!important}
 .article-meta .info .date{color:#bbb;font-size:.8rem;display:block}
-.article-preview{border-top:1px solid rgba(0,0,0,.1);padding:1.5rem 0}
-.article-preview .article-meta{margin:0 0 1rem}
+.article-preview{border-bottom:1px solid rgba(0,0,0,.1);/*padding:1.5rem 0*/padding: 0.9rem 0}
+.article-preview:last-child{border-bottom:none}
+.article-preview .article-meta{margin:0}
 .article-preview .preview-link h1{font-weight:600!important;font-size:1.5rem!important;margin-bottom:3px}
 .article-preview .preview-link p{font-weight:300;font-size:24px;color:#999;margin-bottom:15px;font-size:1rem;line-height:1.3rem}
 .article-preview .preview-link span{max-width:30%;font-size:.8rem;font-weight:300;color:#bbb;vertical-align:middle}
@@ -82,3 +83,104 @@ footer .attribution{vertical-align:middle;margin-left:10px;font-size:.8rem;color
 .tag-default{background-color:#9a9b9b; padding: 5px 8px;border-radius: 5px;}
 .tag-default.active{background-color:#687077}
 .tag-default[href]:focus,.tag-default[href]:hover{background-color:#687077}
+.accordian-user-number{font-size: 18px;font-weight: 500;}
+/* .accordian-user-number a{color: #212121;} */
+.topNav{
+    background: rgb(75,68,102);
+    background: radial-gradient(circle, rgba(75,68,102,1) 0%, rgba(81,115,129,1) 30%, rgba(144,119,138,1) 81%, rgba(107,131,155,1) 100%);
+    background: url('./img/covid-img.jpg');
+    background-position: left center;
+    /*box-shadow:inset 0 8px 8px -8px rgba(0,0,0,.3),inset 0 -8px 8px -8px rgba(0,0,0,.3)*/
+    /* padding: 30px 0 10px; */
+}
+/* .topNav{background: rgb(0 0 0 / 31%);} */
+.topNav .nav-link{color: #ffffff}
+.topNav .nav-link:hover{color: #bfbfbf}
+.date{color: #6a6a6a}
+.acc-btn:focus{box-shadow: none;}
+.help-header{font-weight: 300;margin-bottom: 15px;}
+/* .help-header:before{
+    width: 60px;
+    margin-bottom: 10px;
+    background-color: #fa9234;
+    content: "";
+    display: block;
+    height: 2px;
+} */
+.nav-pills .nav-link{padding:.5rem 0}
+.article-card.card{border-right: 0; border-left: 0;border-radius: 0;}
+.article-card .card-header{background: none;}
+.accord-down-icon{color: #fa9234;}
+.message-text{
+    font-size: 16px;
+    font-weight: 300;
+    color: #000;
+    text-align: left;
+    width: 750px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sendMessageBtn.disabled, .sendMessageBtn:disabled{
+    color: #1b1b1b;
+    background-color: #bdbdbd;
+    border-color: #464646;
+}
+
+.sendMessageBtn{
+    color: #fff;
+    background-color: #fa9234;
+    border-color: #e27210;
+    font-weight: 500;
+}
+
+.sendMessageBtn:focus,.sendMessageBtn:active, .sendMessageBtn:hover {
+    color: #fff;
+    background-color: #d3690c;
+    border-color: #c7630c;
+}
+
+.sendMessageBtn:not(:disabled):not(.disabled).active, .sendMessageBtn:not(:disabled):not(.disabled):active, .show>.sendMessageBtn.dropdown-toggle {
+    color: #fff;
+    background-color: #d3690c;
+    border-color: #c7630c;
+}
+
+.sendMessageBtn:focus{
+    box-shadow: 0 0 0 0.2rem #c26c21;
+}
+
+@media (min-width: 576px) { 
+    .message-text{
+        width: 225px;
+    }
+    .btn-coming-soon{
+        margin-left: 0 !important;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) { 
+    .message-text{
+        width: 390px;
+    }
+ }
+
+ /* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+    .message-text{
+        width: 630px;
+    }
+}
+
+ /* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) { 
+    .message-text{
+        width: 750px;
+    }
+    .btn-coming-soon{
+        margin-left: 5rem !important;
+        
+    }
+ }

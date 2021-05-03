@@ -37,27 +37,33 @@ export default (state = {}, action) => {
         currentPage: action.page
       };
     case APPLY_TAG_FILTER:
-      console.log("in reducer : ", action.payload);
+      // console.log("in reducer : ", action.payload);
       return {
         ...state,
         pager: action.pager,
         articles: action.payload,
-        articlesCount: action.payload.length,
+        articlesCount: (action.payload && action.payload.length) && action.payload.length,
         tab: null,
         tag: action.tag,
         city: action.city,
         currentPage: 0
       };
     case HOME_PAGE_LOADED:
+
+
+// console.log("I am the data here dude:::::::::::::::::::::::::::::::: ", action)
+
       return {
         ...state,
         pager: action.pager,
-        tags: action.payload[0].tags,
+        tags: action.payload[0].data,
         articles: [],//action.payload[1].articles,
         articlesCount: 0,//action.payload[1].articlesCount,
         currentPage: 0,
         tag: 'BED',
-        city: {value: "PUNE", label: "PUNE"},
+        // city: {value: "HYDERABAD", label: "HYDERABAD"},
+        cityArray: action.payload[1].data,
+        refreshDate: action.payload[2].data,
         tab: action.tab
       };
     case HOME_PAGE_UNLOADED:
