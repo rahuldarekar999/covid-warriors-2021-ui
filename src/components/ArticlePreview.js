@@ -1,34 +1,43 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import agent from '../agent';
-import { connect } from 'react-redux';
-import { ARTICLE_FAVORITED, ARTICLE_UNFAVORITED } from '../constants/actionTypes';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight, faCoffee, faUser } from '@fortawesome/free-solid-svg-icons';
-import { Media } from 'react-bootstrap';
-import moment from 'moment';
+import React from "react";
+import { Link } from "react-router-dom";
+import agent from "../agent";
+import { connect } from "react-redux";
+import {
+  ARTICLE_FAVORITED,
+  ARTICLE_UNFAVORITED,
+} from "../constants/actionTypes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronRight,
+  faCoffee,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
+import { Media } from "react-bootstrap";
+import moment from "moment";
 
-const FAVORITED_CLASS = 'btn btn-sm btn-primary';
-const NOT_FAVORITED_CLASS = 'btn btn-sm btn-outline-primary';
+const FAVORITED_CLASS = "btn btn-sm btn-primary";
+const NOT_FAVORITED_CLASS = "btn btn-sm btn-outline-primary";
 
-const mapDispatchToProps = dispatch => ({
-  favorite: slug => dispatch({
-    type: ARTICLE_FAVORITED,
-    payload: agent.Articles.favorite(slug)
-  }),
-  unfavorite: slug => dispatch({
-    type: ARTICLE_UNFAVORITED,
-    payload: agent.Articles.unfavorite(slug)
-  })
+const mapDispatchToProps = (dispatch) => ({
+  favorite: (slug) =>
+    dispatch({
+      type: ARTICLE_FAVORITED,
+      payload: agent.Articles.favorite(slug),
+    }),
+  unfavorite: (slug) =>
+    dispatch({
+      type: ARTICLE_UNFAVORITED,
+      payload: agent.Articles.unfavorite(slug),
+    }),
 });
 
-const ArticlePreview = props => {
+const ArticlePreview = (props) => {
   const article = props.article;
-  const favoriteButtonClass = article.favorited ?
-    FAVORITED_CLASS :
-    NOT_FAVORITED_CLASS;
+  const favoriteButtonClass = article.favorited
+    ? FAVORITED_CLASS
+    : NOT_FAVORITED_CLASS;
 
-  const handleClick = ev => {
+  const handleClick = (ev) => {
     ev.preventDefault();
     if (article.favorited) {
       props.unfavorite(article.slug);
@@ -40,15 +49,12 @@ const ArticlePreview = props => {
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
     d.setUTCSeconds(time);
     // console.log("I am the time : ", d)
-    d = moment(d).format("DD/MM/YYYY \xa0 hh:mm a")
+    d = moment(d).format("DD/MM/YYYY \xa0 hh:mm a");
     return d;
-  }
+  };
   return (
     <div className="article-preview">
       <div className="article-meta">
-
-
-
         <Media>
           {/* {
             (article.author && article.author.image) ? <img src={article.author.image} className="mr-3" alt={article.author.username} /> : <FontAwesomeIcon className="mr-3 fa-3x" icon={faUser} />
@@ -63,20 +69,24 @@ const ArticlePreview = props => {
           <Media.Body>
             {/* <h5 className={'mb-0'}>{article.chatIdMobileNumber}</h5> */}
 
-            <p className={'mb-0'}>
-              <small className="date" style={{display: ' inline-block', minWidth: 135}}>
+            <p className={"mb-0"}>
+              <small
+                className="date"
+                style={{ display: " inline-block", minWidth: 135 }}
+              >
                 {getDate(article.time)}
               </small>
-              <FontAwesomeIcon className="mx-3" style={{ color: '#fa9234' }} icon={faChevronRight} />
+              <FontAwesomeIcon
+                className="mx-3"
+                style={{ color: "#fa9234" }}
+                icon={faChevronRight}
+              />
               {article.body}
             </p>
           </Media.Body>
         </Media>
 
-
-
         {/* <Link to={`#`}> */}
-
 
         {/* </Link> */}
 
@@ -93,6 +103,6 @@ const ArticlePreview = props => {
       {/* </Link> */}
     </div>
   );
-}
+};
 
 export default connect(() => ({}), mapDispatchToProps)(ArticlePreview);

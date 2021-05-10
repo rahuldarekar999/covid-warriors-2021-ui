@@ -9,8 +9,9 @@ import {
   PROFILE_PAGE_LOADED,
   PROFILE_PAGE_UNLOADED,
   PROFILE_FAVORITES_PAGE_LOADED,
-  PROFILE_FAVORITES_PAGE_UNLOADED
-} from '../constants/actionTypes';
+  PROFILE_FAVORITES_PAGE_UNLOADED,
+  LOADING_ARTICLES
+} from "../constants/actionTypes";
 
 export default (state = {}, action) => {
   switch (action.type) {
@@ -18,23 +19,23 @@ export default (state = {}, action) => {
     case ARTICLE_UNFAVORITED:
       return {
         ...state,
-        articles: state.articles.map(article => {
+        articles: state.articles.map((article) => {
           if (article.slug === action.payload.article.slug) {
             return {
               ...article,
               favorited: action.payload.article.favorited,
-              favoritesCount: action.payload.article.favoritesCount
+              favoritesCount: action.payload.article.favoritesCount,
             };
           }
           return article;
-        })
+        }),
       };
     case SET_PAGE:
       return {
         ...state,
         articles: action.payload.articles,
         articlesCount: action.payload.articlesCount,
-        currentPage: action.page
+        currentPage: action.page,
       };
     case APPLY_TAG_FILTER:
       // console.log("in reducer : ", action.payload);
@@ -42,29 +43,27 @@ export default (state = {}, action) => {
         ...state,
         pager: action.pager,
         articles: action.payload,
-        articlesCount: (action.payload && action.payload.length) && action.payload.length,
+        articlesCount: action.payload && action.payload.length && action.payload.length,
         tab: null,
         tag: action.tag,
         city: action.city,
-        currentPage: 0
+        currentPage: 0,
       };
     case HOME_PAGE_LOADED:
-
-
-// console.log("I am the data here dude:::::::::::::::::::::::::::::::: ", action)
+      // console.log("I am the data here dude:::::::::::::::::::::::::::::::: ", action)
 
       return {
         ...state,
         pager: action.pager,
         tags: action.payload[0].data,
-        articles: [],//action.payload[1].articles,
-        articlesCount: 0,//action.payload[1].articlesCount,
+        articles: [], //action.payload[1].articles,
+        articlesCount: 0, //action.payload[1].articlesCount,
         currentPage: 0,
-        tag: 'BED',
-        // city: {value: "HYDERABAD", label: "HYDERABAD"},
+        tag: "BED",
+        // city: {value: "PUNE", label: "PUNE"},
         cityArray: action.payload[1].data,
         refreshDate: action.payload[2].data,
-        tab: action.tab
+        tab: action.tab,
       };
     case HOME_PAGE_UNLOADED:
       return {};
@@ -76,7 +75,7 @@ export default (state = {}, action) => {
         articlesCount: action.payload.articlesCount,
         tab: action.tab,
         currentPage: 0,
-        tag: null
+        tag: null,
       };
     case PROFILE_PAGE_LOADED:
     case PROFILE_FAVORITES_PAGE_LOADED:
@@ -85,8 +84,14 @@ export default (state = {}, action) => {
         pager: action.pager,
         articles: action.payload[1].articles,
         articlesCount: action.payload[1].articlesCount,
-        currentPage: 0
+        currentPage: 0,
       };
+    case LOADING_ARTICLES:
+      // console.log("I am activating the is load variable: ", action)
+      return {
+        ...state,
+        isLoading: action.loadingState
+      }
     case PROFILE_PAGE_UNLOADED:
     case PROFILE_FAVORITES_PAGE_UNLOADED:
       return {};
