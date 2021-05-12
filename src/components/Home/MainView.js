@@ -8,13 +8,16 @@ import Select from "react-select";
 import { Button, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
 import moment from "moment";
 
+import Files from 'react-files'
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faSpinner, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 // import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 // import { Alert } from "bootstrap";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { createBootstrapComponent } from "react-bootstrap/esm/ThemeProvider";
 
 
 
@@ -127,23 +130,102 @@ const MainView = (props) => {
   const [countNumbers, setCountNumbers] = useState(0);
 
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState([]);
 
-  const [copiedText, setCopiedText] = useState('')
+  const [copiedText, setCopiedText] = useState('');
+  const [numbersCopiedStatus, setNumbersCopiedStatus] = useState(false);
+
+  const [loadingTwitter, setLoadingTwitter] = useState(false);
+
+  const [allGenLink, setAllGenLink] = useState('');
+
+  const [sendMobileMsg, setSendMobileMsg] = useState('');
+
+
+
+
+  const onFilesChange = (files) => {
+    console.log(files);
+    // if (selectedFile && selectedFile.length > 5) {
+    //   alert("Maximum File upload limit exceeded: you can upload a maximum of 5 files");
+    //   return;
+    // }
+    let collectedFiles = selectedFile;
+    // return ;
+    // console.log("I am the file ", event.target.files[0]);
+
+
+    if (collectedFiles && collectedFiles.length >= 5) {
+      alert("Maximum File upload limit exceeded: you can upload a maximum of 5 files");
+      return;
+    }
+
+    files.map((file) => {
+      if (collectedFiles && collectedFiles.length < 5) {
+        collectedFiles.push(file);
+      }
+    });
+
+    setSelectedFile([]);
+    setTimeout(() => {
+      setSelectedFile(collectedFiles);
+    }, 300);
+
+    console.log("I am the collected files length::::", collectedFiles.length)
+
+    if (collectedFiles && collectedFiles.length === 0) {
+      setDisableExtract(true);
+    }
+    else {
+      setDisableExtract(false);
+    }
+
+
+
+
+  }
+  const onFilesError = (error, file) => {
+    alert("Invalid file uploaded please upload valid image file with format jpg, jpeg or png");
+    // console.log('error code ' + error.code + ': ' + error.message)
+  }
+
+
+
 
   const uploadFile = () => {
-    // console.log("I am the file ::::::::::::", selectedFile)
+    console.log("I am the file ::::::::::::", selectedFile)
+
+    let fileArray = [];
 
 
     let formData = new FormData();
 
-    formData.append("file", selectedFile);
-    let inputRef = fileInputRef;
 
-    // return ;
+    fileArray = selectedFile.map((file, index) => {
+      // let fileData = new FormData();
+      // return (fileData.append("file", file));
+      // return file;
+      formData.append(`file`, file)
+
+      return formData;
+
+    })
+    // formData.append("file", selectedFile)
+    let fileData = new FormData();
+
+    fileData.append('file', fileArray)
+
+
+    console.log("I am the file array here: ", fileArray);
+
+    console.log("This is a form data::::::::", formData)
+
+    // let inputRef = fileInputRef;
+
+    // return;
 
     setIsSending(true);
-    Promise.resolve(agent.Tags.putFile(formData)).then(function (value) {
+    Promise.resolve(agent.Tags.putFile(fileData)).then(function (value) {
       // setMessage(value.data);
       setIsSending(false);
       // console.log("I am the value here dude: ", value);
@@ -157,7 +239,7 @@ const MainView = (props) => {
 
         setDisableExtract(true);
         setExtractedNumbers(text);
-        setSelectedFile('');
+        setSelectedFile([]);
       }
 
 
@@ -167,11 +249,11 @@ const MainView = (props) => {
       alert("There was an error while extracting numbers from image, we are sorry for the inconvenience please try after some time.")
     });
 
-    if (inputRef) {
-      // console.log("file input", inputRef);
+    // if (inputRef) {
+    //   // console.log("file input", inputRef);
 
-      inputRef.current.value = "";
-    }
+    //   inputRef.current.value = "";
+    // }
 
   }
 
@@ -180,6 +262,10 @@ const MainView = (props) => {
     setShowRegister(true);
     setRegisterCity("");
     setTypeHeadRegisterCity("");
+    // setSubscribeCategory('OXYGEN CYLINDER/REFILL');
+    setSubscribeCategory("HOSPITAL BED");
+    setMedicineName('Remdesivir')
+    setBedOption("Plain Bed")
     setRegisterCategory("HOSPITAL BED");
     setRegisterMobileNUmber(localStorage.getItem('userMobile') ? localStorage.getItem('userMobile') : '');
     setIsSending(false);
@@ -227,6 +313,7 @@ const MainView = (props) => {
   const handleFileUploadShow = () => {
     setShowFileUpload(true);
     setExtractedNumbers('');
+    setSelectedFile([]);
     // setSubscribeCity("");
     // setSubscribeCategory("OXYGEN");
     // setSubscribeMobile("");
@@ -274,7 +361,7 @@ const MainView = (props) => {
     let subCat = '';
     switch (selTag) {
       case "OXYGEN":
-        subCat = 'Oxygen';
+        subCat = o2Category;
         break;
       case "BED":
         subCat = bedOption;
@@ -450,25 +537,67 @@ const MainView = (props) => {
       return;
     }
 
-    var cat = registerCategory;
 
-    if (registerCategory === "OXYGEN CYLINDER/REFILL") {
+
+
+
+    var cat = subscribeCategory;
+
+    if (subscribeCategory === "OXYGEN CYLINDER/REFILL") {
       cat = "OXYGEN";
     }
-    if (registerCategory === "HOSPITAL BED") {
+    if (subscribeCategory === "HOSPITAL BED") {
       cat = "BED";
+    }
+    let subCat = '';
+    switch (subscribeCategory) {
+      case "OXYGEN CYLINDER/REFILL":
+        subCat = o2Category;
+        break;
+      case "HOSPITAL BED":
+        subCat = bedOption;
+        break;
+      case "MEDICINE":
+        if (otherMedicine) {
+          subCat = otherMedicine;
+        }
+        else {
+          subCat = medicineName
+        }
+        break;
+      case "PLASMA":
+        subCat = bloodGroup;
+        break;
     }
 
     var response = {
       city: registerCity.value.toUpperCase(),
       category: cat,
-      mobile: registerMobileNumber,
+      from: registerMobileNumber,
+      forward: true,
+      subscribed: true,
+      subCat: subCat
     };
 
+    // var cat = registerCategory;
+
+    // if (registerCategory === "OXYGEN CYLINDER/REFILL") {
+    //   cat = "OXYGEN";
+    // }
+    // if (registerCategory === "HOSPITAL BED") {
+    //   cat = "BED";
+    // }
+
+    // var response = {
+    //   city: registerCity.value.toUpperCase(),
+    //   category: cat,
+    //   mobile: registerMobileNumber,
+    // };
+
     setIsSending(true);
-    Promise.resolve(agent.Tags.registerUser(response)).then(function (value) {
+    Promise.resolve(agent.Tags.getSocialMedia(response)).then(function (value) {
       // console.log("I am the status: ", value);
-      if (value === null) {
+      if (value) {
 
 
 
@@ -487,7 +616,10 @@ const MainView = (props) => {
         setRegisterMobileNUmber("");
         setShowRegister(false);
         setIsSending(false);
-        alert("Provider Registerd");
+        // setSubscribeCity("");
+        // setSubscribeMobile("");
+        setSubscribeCategory("BED");
+        alert(`Request sent to ${value.data} Leads`);
       }
     }, function (e) {
       setIsSending(false);
@@ -522,6 +654,26 @@ const MainView = (props) => {
 
     // setModalCity();
   }, [props.cityArray]);
+
+  useEffect(() => {
+    // setTimeout(()=>{}, 200);
+
+    console.log("I have some file", selectedFile);
+    // if (selectedFile && selectedFile.length === 0) {
+
+
+
+    // }
+    if (selectedFile && selectedFile.length === 0) {
+      setDisableExtract(true);
+    }
+    else {
+      setDisableExtract(false);
+    }
+    // if (selectedFile) {
+    //   uploadFile();
+    // }
+  }, [selectedFile])
 
 
 
@@ -564,6 +716,108 @@ const MainView = (props) => {
 
   }, [subscribeCity, subscribeCategory])
 
+
+
+
+  // useEffect(() => {
+
+
+  //   if (registerCity && registerCity.value) {
+  //     var cat = subscribeCategory;
+
+  //     if (subscribeCategory === "OXYGEN CYLINDER/REFILL") {
+  //       cat = "OXYGEN";
+  //     }
+  //     if (subscribeCategory === "HOSPITAL BED") {
+  //       cat = "BED";
+  //     }
+  //     let subCat = '';
+  //     switch (subscribeCategory) {
+  //       case "OXYGEN CYLINDER/REFILL":
+  //         subCat = o2Category;
+  //         break;
+  //       case "HOSPITAL BED":
+  //         subCat = bedOption;
+  //         break;
+  //       case "MEDICINE":
+  //         if (otherMedicine) {
+  //           subCat = otherMedicine;
+  //         }
+  //         else {
+  //           subCat = medicineName
+  //         }
+  //         break;
+  //       case "PLASMA":
+  //         subCat = bloodGroup;
+  //         break;
+  //     }
+
+  //     var response = {
+  //       city: registerCity.value.toUpperCase(),
+  //       category: cat,
+  //       from: registerMobileNumber,
+  //       forward: true,
+  //       subscribed: true,
+  //       subCat: subCat
+  //     };
+
+
+  //     setLoadingTwitter(true);
+  //     Promise.resolve(agent.Tags.getTwitterData(response)).then(function (value) {
+
+  //       if (value) {
+
+
+  //         setLoadingTwitter(false);
+
+  //         console.log("I am the status: ", unescape(value.html));
+
+
+  //         document.getElementById('iframe1').contentWindow.document.write("");
+  //         document.getElementById('iframe1').contentWindow.document.write(unescape(value.html));
+  //         // props.showLoading();
+  //         // props.onClickTag(
+  //         //   cat,
+  //         //   registerCity,
+  //         //   (page) => agent.Articles.byTag(cat, registerCity.value, page),
+  //         //   agent.Articles.byTag(cat, registerCity.value)
+  //         // );
+
+  //         // localStorage.setItem('userMobile', registerMobileNumber);
+
+  //         // setRegisterCity("");
+  //         // setRegisterCategory("BED");
+  //         // setRegisterMobileNUmber("");
+  //         // setShowRegister(false);
+  //         // setIsSending(false);
+  //         // // setSubscribeCity("");
+  //         // // setSubscribeMobile("");
+  //         // setSubscribeCategory("BED");
+  //         // alert(`Request sent to ${value.data} Leads`);
+  //       }
+  //     }, function (e) {
+  //       setLoadingTwitter(false);
+  //       console.error("Exception occured: ", e); // TypeError: Throwing
+  //       alert("There was an error while sending message, we are sorry for the inconvenience please try after some time.")
+  //     });
+
+
+
+
+  //   }
+
+
+
+
+
+
+
+
+
+  // }, [registerCity, subscribeCategory, o2Category, bedOption, otherMedicine, medicineName, bloodGroup])
+
+
+
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -581,6 +835,21 @@ const MainView = (props) => {
     );
   };
 
+
+  const redirectLink = (mo, index) => {
+    let msg = message;
+
+
+    let allMob = allGenLink;
+
+    allMob[index].isClicked = true;
+setAllGenLink([]);
+setTimeout(()=>{setAllGenLink(allMob);}, 200)
+    
+
+    // console.log(msg, selTag);
+    window.open(`https://wa.me/91${mo.mob}?text=${encodeURIComponent(msg)}`, "_blank");
+  }
 
   return (
     <div className="col-md-12">
@@ -1256,7 +1525,8 @@ const MainView = (props) => {
                       // setMessage(value.data);
 
                       if (targetValue === 'OXYGEN') {
-                        setMessage("Do you have OXYGEN cylinder available. Need urgent help please 🙏🙏🙏");
+                        setO2Category("O2 Cylinder");
+                        setMessage("Do you have O2 cylinder available. Need urgent help please 🙏🙏🙏");
                       }
                       if (targetValue === "BED") {
                         setBedOption("Plain Bed");
@@ -1297,6 +1567,86 @@ const MainView = (props) => {
                   </select>
                 </div>
               </div>
+
+
+              {selTag === "OXYGEN" && (
+                <React.Fragment>
+                  <div className="form-group row">
+                    <div className={"col-sm-2"}></div>
+                    <div className={"col-sm-10"}>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="oxygenCat"
+                          id="oxygenCylinder"
+                          value="O2 Cylinder"
+                          checked={o2Category === "O2 Cylinder"}
+                          onChange={() => {
+                            setO2Category("O2 Cylinder");
+                            setMessage("Do you have O2 cylinder available. Need urgent help please 🙏🙏🙏");
+                            // setMessage(
+                            //   "Do you have Remdesivir medicine available? Need urgent help please 🙏🙏🙏"
+                            // );
+                          }}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="oxygenCylinder"
+                        >
+                          O2 Cylinder
+                          </label>
+                      </div>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="oxygenCat"
+                          id="oxygenRefill"
+                          value="O2 Refill"
+                          checked={o2Category === "O2 Refill"}
+                          onChange={() => {
+                            setO2Category("O2 Refill");
+                            setMessage("Do you have O2 Refill available. Need urgent help please 🙏🙏🙏");
+                            // setMessage(
+                            //   "Do you have Tocilizumab medicine available? Need urgent help please 🙏🙏🙏"
+                            // );
+                          }}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="oxygenRefill"
+                        >
+                          O2 Refill
+                          </label>
+                      </div>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="oxygenCat"
+                          id="oxygenConcentrator"
+                          value="O2 Concentrator"
+                          checked={o2Category === "O2 Concentrator"}
+                          onChange={() => {
+                            setO2Category("O2 Concentrator");
+                            setMessage("Do you have O2 Concentrator available. Need urgent help please 🙏🙏🙏");
+                            // setOtherMedicine("");
+                            // setMessage(
+                            //   "Do you have ____ medicine available? Need urgent help please 🙏🙏🙏"
+                            // );
+                          }}
+                        />
+                        <label className="form-check-label" htmlFor="oxygenConcentrator">
+                          O2 Concentrator
+                          </label>
+                      </div>
+                    </div>
+                  </div>
+
+                </React.Fragment>
+              )}
+
 
               {selTag === "BED" && (
                 <div className="form-group row">
@@ -1533,12 +1883,12 @@ const MainView = (props) => {
               <div className="form-group">
                 <label htmlFor="txtmessage">
                   Message{" "}
-                  <small>
+                  {/* <small>
                     (cannot be edited because of security reasons)
-                    </small>
+                    </small> */}
                 </label>
                 <textarea
-                  readonly="true"
+                  // readonly="true"
                   rows={2}
                   minlength="1"
                   value={message}
@@ -1567,8 +1917,40 @@ const MainView = (props) => {
                 ></textarea>
               </div>
 
+
+              <div>
+                { }
+              </div>
+
               <div className="form-group">
-                {/* <div
+                <button className="btn sendMessageBtn" onClick={() => {
+                  var toMob = [];
+                  var mob = "";
+                  mob = toMobile.replace(/,/g, "\n");
+                  if (mob.split("\n").length > 0) {
+                    toMob = mob.split("\n");
+                  }
+                  toMob = toMob.filter(function (el) {
+                    return el != "";
+                  });
+                  toMob = toMob.map((mb) => {
+                    return ({ mob: mb, isClicked: false })
+                  })
+                  setAllGenLink(toMob);
+                }}>Generate Links</button>
+              </div>
+              {allGenLink && <div className="form-group files" style={{ maxHeight: 200, overflowY: 'scroll' }}>
+                <code>
+                  {(allGenLink && allGenLink.length > 0) &&
+                    allGenLink.map((mo, index) => {
+                      return (<div key={mo.mobile}><a style={{ color: '#007bff', cursor: 'pointer' }} onClick={() => { redirectLink(mo, index) }}>{mo.mob}</a> &nbsp;&nbsp;<a style={{ color: '#007bff', cursor: 'pointer' }} onClick={() => { redirectLink(mo, index) }}>send</a> &nbsp;{mo.isClicked && <FontAwesomeIcon className={''} icon={faCheck} style={{ color: "#212121" }} />}</div>);
+                    })
+                  }
+                </code>
+              </div>}
+
+              {/* <div className="form-group"> */}
+              {/* <div
                     className={`form-check ${
                       fromOption === "two" && "d-flex align-items-start"
                     }`}
@@ -1588,11 +1970,11 @@ const MainView = (props) => {
                     </label>
                   </div> */}
 
-                {/* <div
+              {/* <div
                   className={`form-check ${fromOption === "two" && "d-flex align-items-center"
                     }`}
                 > */}
-                {/* <input
+              {/* <input
                     className="form-check-input"
                     checked={fromOption === "two" ? true : false}
                     type="checkbox"
@@ -1611,27 +1993,27 @@ const MainView = (props) => {
                     value="two"
                     id="chktwo"
                   /> */}
-                <label
+              {/* <label
                   className="form-check-label d-flex align-items-center"
                   htmlFor="chktwo"
                   style={{ fontSize: 14 }}
                 >
                   Please WhatsApp me responses on
                       <input max="12" value={fromMobile} onChange={(e) => setFromMobile(e.target.value)} type="number" className="form-control col-sm-5 ml-2" id="txtFromMobile" aria-describedby="Your Mobile Number" placeholder={'Enter Your Mobile'} />
-                </label>
-                {/* </div> */}
-              </div>
+                </label> */}
+              {/* </div> */}
+              {/* </div> */}
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
                 Close
                 </Button>
-              <Button
+              {/* <Button
                 variant="primary"
                 disabled={isSending ? true : false}
                 onClick={handleSubmit}
                 className={"sendMessageBtn"}
-              >{(isSending) && <FontAwesomeIcon className={'rotate-icon'} icon={faSpinner} style={{ color: "#ffffff" }} />} Send</Button>
+              >{(isSending) && <FontAwesomeIcon className={'rotate-icon'} icon={faSpinner} style={{ color: "#ffffff" }} />} Send</Button> */}
             </Modal.Footer>
           </Modal>
 
@@ -1652,7 +2034,7 @@ const MainView = (props) => {
             key={'bottom'}
             placement={'bottom'}
             overlay={
-              <Tooltip id={`tooltip-bottom`}>If you are a owner/service provider who can help people then you can register here. You will get messages from people asking for help.</Tooltip>
+              <Tooltip id={`tooltip-bottom`}>Reach out to Twitter verified leads</Tooltip>
             }
           >
             <div
@@ -1662,164 +2044,498 @@ const MainView = (props) => {
               style={{ backgroundColor: "#f1f1f1", borderRadius: 5 }}
             >
               <div
-                className={"d-flex align-items-center justify-content-center"}
+                className={"d-flex align-items-center justify-content-center text-center"}
                 style={{ minHeight: 38 }}
               >
-                Register as a provider{" "}
+                {/* Register as a provider{" "} */}
+                Verified Leads from Twitter
               </div>
               <Button
                 variant="primary"
                 onClick={handleRegisterShow}
                 className={"sendMessageBtn"}
               >
-                Register
+                Reach
             </Button>
             </div>
           </OverlayTrigger>
           <Modal show={showRegister} onHide={handleRegisterClose}>
             <Modal.Header closeButton>
-              <Modal.Title>Register as a Provider</Modal.Title>
+              <Modal.Title>Reach out to Verified Leads</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div className="form-group row">
-                <label
-                  htmlFor="txtRegisterCity"
-                  className={"col-sm-2 col-form-label"}
-                >
-                  City
+
+
+              <div className={'row'}>
+                <div className={'col-sm-12'}>
+
+                  <div className="form-group row">
+                    <label
+                      htmlFor="txtRegisterCity"
+                      className={"col-sm-2 col-form-label"}
+                    >
+                      City
                   </label>
-                <div className={"col-sm-5"}>
-                  {/* <Typeahead
-                    id={'registerCity'}
-                    placeholder={"Enter City"}
-                    // ref={ref}
-                    onInputChange={(text, e) => { setRegisterCity(text); }}
-                    onChange={(selected) => {
-                      // this.setState({selected});
-                      // console.log("I am the city here: ", selected)
-                      setTypeHeadRegisterCity(selected)
-                      setRegisterCity((selected && selected.length > 0) && selected[0].value);
-                    }}
-                    labelKey={option => `${option.value}`}
-                    options={options}
-                    // className="form-control"
-                    // options={(props && props.cityArray) && props.cityArray}
-                    selected={typeheadRegisterCity}
-                    renderMenu={(results, menuProps) => (
-                      <Menu {...menuProps}>
-                        {results.map((result, index) => (
-                          <MenuItem option={result} position={index}>
-                            {result.label}
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    )}
-                  /> */}
-                  <Select
-                    id={'registerCity'}
-                    styles={customStyles}
-                    name="registerCity"
-                    value={registerCity}
-                    placeholder={"Select City"}
-                    options={options}
-                    onChange={(text) => { setRegisterCity(text) }}
-                    theme={(theme) => ({
-                      ...theme,
-                      borderRadius: 5,
-                      colors: {
-                        ...theme.colors,
-                        primary25: "#fa9234",
-                        primary: "#fa9234",
-                      },
-                    })}
-                    filterOption={(option, inputValue) => {
-                      // inputValue = inputValue.toLowerCase();
-                      return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
-                    }}
-                  />
-                  {/* <input
-                    type="text"
-                    className="form-control"
-                    id="txtRegisterCity"
-                    aria-describedby="Enter City"
-                    placeholder={"Enter City"}
-                    value={registerCity}
-                    onChange={(e) => setRegisterCity(e.target.value)}
-                  /> */}
+                    <div className={"col-sm-6"}>
+
+                      <Select
+                        id={'registerCity'}
+                        styles={customStyles}
+                        name="registerCity"
+                        value={registerCity}
+                        placeholder={"Select City"}
+                        options={options}
+                        onChange={(text) => { setRegisterCity(text) }}
+                        theme={(theme) => ({
+                          ...theme,
+                          borderRadius: 5,
+                          colors: {
+                            ...theme.colors,
+                            primary25: "#fa9234",
+                            primary: "#fa9234",
+                          },
+                        })}
+                        filterOption={(option, inputValue) => {
+                          // inputValue = inputValue.toLowerCase();
+                          return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group row">
+                    <label htmlFor="selTag" className={"col-sm-2 col-form-label"}>Item</label>
+                    <div className={"col-sm-6"}>
+                      {/* <input type="text" className="form-control" id="txtCity" aria-describedby="Enter City" placeholder={'Enter City'} /> */}
+                      <select
+                        onChange={(e) => {
+                          // setSubscribeCategory(e.target.value);
+                          let cat = e.target.value;
+                          setSubscribeCategory(cat);
+                          setO2Category("O2 Cylinder");
+                          setBedOption("Plain Bed");
+                          setBloodGroup("O-");
+                          setMedicineName("Remdesivir");
+                        }}
+                        value={subscribeCategory}
+                        className="form-control"
+                        name={"selTag"}
+                        id={"selTag"}
+                      >
+                        {props.tags &&
+                          props.tags.length > 0 &&
+                          props.tags.map((tg) => {
+                            if (tg === "OXYGEN") {
+                              return (
+                                <option
+                                  key={"OXYGEN CYLINDER/REFILL"}
+                                  value={"OXYGEN CYLINDER/REFILL"}
+                                >
+                                  OXYGEN CYLINDER/REFILL
+                                </option>
+                              );
+                            }
+                            if (tg === "BED") {
+                              return (
+                                <option
+                                  key={"HOSPITAL BED"}
+                                  value={"HOSPITAL BED"}
+                                >
+                                  HOSPITAL BED
+                                </option>
+                              );
+                            }
+                            if (tg !== "CUSTOM") {
+                              return (
+                                <option key={tg} value={tg}>
+                                  {tg}
+                                </option>
+                              );
+                            }
+                          })}
+                      </select>
+                    </div>
+                  </div>
+
+
+
+
+                  {subscribeCategory === "HOSPITAL BED" && (
+                    <div className="form-group row">
+                      <div className={"col-sm-2"}></div>
+                      <div className={"col-sm-10"}>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="bedOptions"
+                            id="plainBed"
+                            value="Plain Bed"
+                            checked={bedOption === "Plain Bed"}
+                            onChange={() => {
+                              setBedOption("Plain Bed");
+                              // setMessage(
+                              //   "Need plain bed. Request your help urgently🙏🙏🙏"
+                              // );
+                            }}
+                          />
+                          <label className="form-check-label" htmlFor="plainBed">
+                            Plain
+                        </label>
+                        </div>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="bedOptions"
+                            id="o2Bed"
+                            value="O2 Bed"
+                            checked={bedOption === "O2 Bed"}
+                            onChange={() => {
+                              setBedOption("O2 Bed");
+                              // setMessage(
+                              //   "Need O2 bed urgently. Request your help urgently🙏🙏🙏"
+                              // );
+                            }}
+                          />
+                          <label className="form-check-label" htmlFor="o2Bed">
+                            O2
+                        </label>
+                        </div>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="bedOptions"
+                            id="ventilatorBed"
+                            value="Ventilator Bed"
+                            checked={bedOption === "Ventilator Bed"}
+                            onChange={() => {
+                              setBedOption("Ventilator Bed");
+                              // setMessage(
+                              //   "Need ventilator bed very urgently. Request your help urgently🙏🙏🙏"
+                              // );
+                            }}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="ventilatorBed"
+                          >
+                            Ventilator
+                        </label>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {subscribeCategory === "PLASMA" && (
+                    <div className="form-group row">
+                      <label
+                        htmlFor="selBloodGroup"
+                        style={{ lineHeight: 1.2 }}
+                        className={"col-sm-2 mb-0"}
+                      >
+                        Blood Group
+                    </label>
+                      <div className={"col-sm-5"}>
+                        {/* <input type="text" className="form-control" id="txtCity" aria-describedby="Enter City" placeholder={'Enter City'} /> */}
+                        <select
+                          onChange={(e) => {
+                            let targetValue = e.target.value;
+                            setBloodGroup(targetValue);
+                            // setMessage(
+                            //   `Do you have PLASMA for ${targetValue} bloodgroup available? Need Urgent help Please 🙏🙏🙏`
+                            // );
+                          }}
+                          value={bloodGroup}
+                          className="form-control"
+                          name={"selBloodGroup"}
+                          id={"selBloodGroup"}
+                        >
+                          <option key={"O-"} value={"O-"}>
+                            {"O-"}
+                          </option>
+                          <option key={"O+"} value={"O+"}>
+                            {"O+"}
+                          </option>
+                          <option key={"A-"} value={"A-"}>
+                            {"A-"}
+                          </option>
+                          <option key={"A+"} value={"A+"}>
+                            {"A+"}
+                          </option>
+                          <option key={"B-"} value={"B-"}>
+                            {"B-"}
+                          </option>
+                          <option key={"B+"} value={"B+"}>
+                            {"B+"}
+                          </option>
+                          <option key={"AB-"} value={"AB-"}>
+                            {"AB-"}
+                          </option>
+                          <option key={"AB+"} value={"AB+"}>
+                            {"AB+"}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+                  {subscribeCategory === "MEDICINE" && (
+                    <React.Fragment>
+                      <div className="form-group row">
+                        <div className={"col-sm-2"}></div>
+                        <div className={"col-sm-10"}>
+                          <div className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="medicineName"
+                              id="Remdesivir"
+                              value="Remdesivir"
+                              checked={medicineName === "Remdesivir"}
+                              onChange={() => {
+                                setMedicineName("Remdesivir");
+                                // setMessage(
+                                //   "Do you have Remdesivir medicine available? Need urgent help please 🙏🙏🙏"
+                                // );
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="Remdesivir"
+                            >
+                              Remdesivir
+                          </label>
+                          </div>
+                          <div className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="medicineName"
+                              id="Tocilizumab"
+                              value="Tocilizumab"
+                              checked={medicineName === "Tocilizumab"}
+                              onChange={() => {
+                                setMedicineName("Tocilizumab");
+                                // setMessage(
+                                //   "Do you have Tocilizumab medicine available? Need urgent help please 🙏🙏🙏"
+                                // );
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="Tocilizumab"
+                            >
+                              Tocilizumab
+                          </label>
+                          </div>
+                          <div className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="medicineName"
+                              id="Other"
+                              value="Other"
+                              checked={medicineName === "Other"}
+                              onChange={() => {
+                                setMedicineName("Other");
+                                setOtherMedicine("");
+                                // setMessage(
+                                //   "Do you have ____ medicine available? Need urgent help please 🙏🙏🙏"
+                                // );
+                              }}
+                            />
+                            <label className="form-check-label" htmlFor="Other">
+                              Other
+                          </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {medicineName === "Other" && (
+                        <div className="form-group row">
+                          {/* <div className="col-sm-2"></div> */}
+                          {/* <div className="col-sm-10"> */}
+                          <label
+                            htmlFor="txtOtherMedicine"
+                            style={{ lineHeight: 1.2 }}
+                            className={"col-sm-2 mb-0"}
+                          >
+                            Other Medicine
+                        </label>
+                          <div className={"col-sm-6"}>
+                            <input
+                              maxLength="50"
+                              value={otherMedicine}
+                              onChange={(e) => {
+                                setOtherMedicine(e.target.value);
+                                // if (e.target.value === "") {
+                                // setMessage(
+                                //   `Do you have ____ medicine available? Need urgent help please 🙏🙏🙏`
+                                // );
+                                // } else {
+                                // setMessage(
+                                //   `Do you have ${e.target.value} medicine available? Need urgent help please 🙏🙏🙏`
+                                // );
+                                // }
+                              }}
+                              type="text"
+                              className="form-control"
+                              id="txtOtherMedicine"
+                              aria-describedby="Enter Medicine Name"
+                              placeholder={"Enter Medicine Name"}
+                            />
+                          </div>
+                          {/* </div> */}
+                        </div>
+                      )}
+                    </React.Fragment>
+                  )}
+
+                  {subscribeCategory === "OXYGEN CYLINDER/REFILL" && (
+                    <React.Fragment>
+                      <div className="form-group row">
+                        <div className={"col-sm-2"}></div>
+                        <div className={"col-sm-10"}>
+                          <div className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="oxygenCat"
+                              id="oxygenCylinder"
+                              value="O2 Cylinder"
+                              checked={o2Category === "O2 Cylinder"}
+                              onChange={() => {
+                                setO2Category("O2 Cylinder");
+                                // setMessage(
+                                //   "Do you have Remdesivir medicine available? Need urgent help please 🙏🙏🙏"
+                                // );
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="oxygenCylinder"
+                            >
+                              O2 Cylinder
+                          </label>
+                          </div>
+                          <div className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="oxygenCat"
+                              id="oxygenRefill"
+                              value="O2 Refill"
+                              checked={o2Category === "O2 Refill"}
+                              onChange={() => {
+                                setO2Category("O2 Refill");
+                                // setMessage(
+                                //   "Do you have Tocilizumab medicine available? Need urgent help please 🙏🙏🙏"
+                                // );
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="oxygenRefill"
+                            >
+                              O2 Refill
+                          </label>
+                          </div>
+                          <div className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="oxygenCat"
+                              id="oxygenConcentrator"
+                              value="O2 Concentrator"
+                              checked={o2Category === "O2 Concentrator"}
+                              onChange={() => {
+                                setO2Category("O2 Concentrator");
+                                // setOtherMedicine("");
+                                // setMessage(
+                                //   "Do you have ____ medicine available? Need urgent help please 🙏🙏🙏"
+                                // );
+                              }}
+                            />
+                            <label className="form-check-label" htmlFor="oxygenConcentrator">
+                              O2 Concentrator
+                          </label>
+                          </div>
+                        </div>
+                      </div>
+
+                    </React.Fragment>
+                  )}
+
+                  {subscribeCity &&
+                    <div className={'form-group row'}>
+                      <div className={'col-sm-2'}></div>
+                      <div className={'col-sm-9'}>
+                        <span style={{ fontWeight: 500 }}>
+                          Message will be sent to &nbsp;
+                      {
+                            (loadingCount) ? <FontAwesomeIcon className={'rotate-icon'} icon={faSpinner} style={{ color: "#fa9234" }} /> :
+
+                              <strong style={{ fontSize: 20 }}>{countNumbers}&nbsp;</strong>
+                          }
+                      providers
+                  </span>
+                      </div>
+                    </div>
+                  }
+
+
+
+                  <div className="form-group row">
+                    <label
+                      htmlFor="txtRegisterMobileNumber"
+                      className={"col-sm-2"}
+                      style={{ lineHeight: 1 }}
+                    >
+                      Your Mobile
+                  </label>
+                    <div className={"col-sm-6"}>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="txtRegisterMobileNumber"
+                        aria-describedby="Enter Mobile Number"
+                        placeholder={"Enter Your Mobile"}
+                        value={registerMobileNumber}
+                        onChange={(e) => setRegisterMobileNUmber(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <small style={{ fontWeight: 600 }}>*This will trigger a <strong>WhatsApp</strong> Message to all the verified leads from <strong>Twitter</strong> (last three days).</small>
+
+
+
+
+
                 </div>
+                {/* <div className={'col-sm-6'}>
+
+
+                  {(loadingTwitter) ? <div className={'d-flex flex-column align-items-center justify-content-center'}>
+                    <FontAwesomeIcon className={'rotate-icon loading-icon'} icon={faSpinner} style={{ color: "#fa9234" }} />
+                    <span className={'loading-text'}>Loading Results</span>
+                  </div> : <iframe id="iframe1" style={{ height: 430 }} className={'col-sm-12'}>
+                    <p>Your browser does not support iframes.</p>
+                  </iframe>}
+
+
+
+                </div> */}
               </div>
 
-              <div className="form-group row">
-                <label
-                  htmlFor="selCategory"
-                  className={"col-sm-2 col-form-label"}
-                >
-                  Category
-                  </label>
-                <div className={"col-sm-5"}>
-                  <select
-                    onChange={(e) => {
-                      setRegisterCategory(e.target.value);
-                    }}
-                    value={registerCategory}
-                    className="form-control"
-                    name={"selCategory"}
-                    id={"selCategory"}
-                  >
-                    {props.tags &&
-                      props.tags.length > 0 &&
-                      props.tags.map((tg) => {
-                        if (tg === "OXYGEN") {
-                          return (
-                            <option
-                              key={"OXYGEN CYLINDER/REFILL"}
-                              value={"OXYGEN CYLINDER/REFILL"}
-                            >
-                              OXYGEN CYLINDER/REFILL
-                            </option>
-                          );
-                        }
-                        if (tg === "BED") {
-                          return (
-                            <option
-                              key={"HOSPITAL BED"}
-                              value={"HOSPITAL BED"}
-                            >
-                              HOSPITAL BED
-                            </option>
-                          );
-                        }
-                        if (tg !== "CUSTOM") {
-                          return (
-                            <option key={tg} value={tg}>
-                              {tg}
-                            </option>
-                          );
-                        }
-                      })}
-                  </select>
-                </div>
-              </div>
 
-              <div className="form-group row">
-                <label
-                  htmlFor="txtRegisterMobileNumber"
-                  className={"col-sm-2 col-form-label"}
-                >
-                  Mobile
-                  </label>
-                <div className={"col-sm-5"}>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="txtRegisterMobileNumber"
-                    aria-describedby="Enter Mobile Number"
-                    placeholder={"Enter Your Mobile"}
-                    value={registerMobileNumber}
-                    onChange={(e) => setRegisterMobileNUmber(e.target.value)}
-                  />
-                </div>
-              </div>
+
+
+
+
+
+
+
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleRegisterClose}>
@@ -1831,7 +2547,7 @@ const MainView = (props) => {
                 onClick={handleRegisterSubmit}
                 className={"sendMessageBtn"}
               >
-                {(isSending) && <FontAwesomeIcon className={'rotate-icon'} icon={faSpinner} style={{ color: "#ffffff" }} />} Register
+                {(isSending) && <FontAwesomeIcon className={'rotate-icon'} icon={faSpinner} style={{ color: "#ffffff" }} />} Reach Now
                 </Button>
             </Modal.Footer>
           </Modal>
@@ -1883,7 +2599,7 @@ const MainView = (props) => {
               <Modal.Title>Extract Phone Numbers</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div class="form-group">
+              <div className="form-group">
 
 
 
@@ -1900,7 +2616,7 @@ const MainView = (props) => {
                 {/* <label htmlFor="filePicker" style={{ background:"grey", padding:"5px 10px" }}>
 Upload Image to Extract Numbers */}
                 {/* <input id="filePicker" style={{visibility:"hidden"}} type={"file"}> */}
-                <input type="file"
+                {/* <input type="file"
                   accept="image/*"
                   class="form-control-file d-none"
                   id="uploadImage"
@@ -1919,9 +2635,51 @@ Upload Image to Extract Numbers */}
 
                   }}
                 // style={{visibility:"hidden"}}
-                />
-                <label for="uploadImage" className={'btn sendMessageBtn'}>Click here to upload file</label>
-                {(selectedFile && selectedFile.name) && <p>Selected File: {selectedFile.name}</p>}
+                /> */}
+                {/* <label for="uploadImage" className={'btn sendMessageBtn'}>Click here to upload file</label> */}
+
+
+
+
+
+                <div className="files">
+                  <Files
+                    className='files-dropzone'
+                    onChange={onFilesChange}
+                    onError={onFilesError}
+                    accepts={['image/png', 'image/jpg', 'image/jpeg',]}
+                    multiple
+                    maxFileSize={10000000}
+                    minFileSize={0}
+                    clickable
+                  >
+                    <span className={'w-100 d-flex align-items-center justify-content-center text-center flex-column pt-3 pb-3'} style={{ display: 'block', marginBottom: 10 }}>
+                      Drop files here or click to add files<small style={{ display: 'block' }}>(Maximum 5 files)</small></span>
+                  </Files>
+                  <div className={'pt-2 mt-3'} style={{ borderTop: '1px solid #ddd' }}>
+                    {(selectedFile && selectedFile.length > 0) ? selectedFile.map((file, index) => {
+                      return (<p key={file.id}><strong>File:</strong> {file.name} <span onClick={() => {
+                        let arr = selectedFile.filter(function (fl) {
+                          return fl.id !== file.id
+                        })
+                        setSelectedFile(arr);
+                      }} className={'close-icon'}><FontAwesomeIcon className={''} icon={faTimes} /></span></p>);
+                    }) : <p>No file added</p>}
+                  </div>
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1931,7 +2689,7 @@ Upload Image to Extract Numbers */}
 
 
               </div>
-              <div class="form-group">
+              <div className="form-group">
 
 
 
@@ -2025,19 +2783,21 @@ Upload Image to Extract Numbers */}
               }>Select All</Button> */}
 
               <CopyToClipboard text={(extractedNumbers && extractedNumbers.length > 0) ? extractedNumbers : false}
-                onCopy={() => alert("Extracted numbers copied to clipboard ")}>
-                <Button disabled={(extractedNumbers && extractedNumbers.length > 0) ? false : true} variant="primary" className={"sendMessageBtn"}>Copy Numbers</Button>
+                onCopy={() => { setNumbersCopiedStatus(true); setTimeout(() => { setNumbersCopiedStatus(false); }, 10000) }}>
+                <Button disabled={(extractedNumbers && extractedNumbers.length > 0) ? false : true} variant="primary" className={"sendMessageBtn"}>
+                  {(numbersCopiedStatus) ? 'Copied to Clipboard...' : 'Copy Numbers'}
+                </Button>
               </CopyToClipboard>
 
               {/* {(extractedNumbers && extractedNumbers.length > 0) && */}
-              <Button
+              {/* <Button
                 variant="primary"
                 disabled={(extractedNumbers && extractedNumbers.length > 0) ? false : true}
                 onClick={showNumbersConnect}
                 className={"sendMessageBtn"}
               >
                 One Click WhatsApp Sending
-                </Button>
+                </Button> */}
               {/* } */}
               <Button variant="secondary" onClick={handleFileUploadClose}>Close</Button>
 

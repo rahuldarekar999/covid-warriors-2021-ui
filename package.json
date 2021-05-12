@@ -24,6 +24,7 @@
     "react-bootstrap-typeahead": "^5.1.4",
     "react-copy-to-clipboard": "^5.0.3",
     "react-dom": "^16.3.0",
+    "react-files": "^3.0.0-alpha.1",
     "react-pro-sidebar": "^0.6.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.1.2",

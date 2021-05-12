@@ -126,9 +126,11 @@ const ArticleList = (props) => {
 
                     <a
                       className={'mr-3'}
+                      style={{ minWidth: 150 }}
                       // style={{ lineHeight: 1 }}
-                      href={`tel:${userMobileNo}`}>
+                      href={`tel:${userMobileNo}`} >
                       +{userMobileNo}
+
                     </a>
                     <OverlayTrigger
                       key={'bottom'}
