@@ -14,6 +14,7 @@ import Register from '../components/Register';
 import Settings from '../components/Settings';
 import { store } from '../store';
 import { push } from 'react-router-redux';
+import Response from './Response';
 
 // import bootstrap from 'bootstrap';
 
@@ -68,6 +69,7 @@ class App extends React.Component {
             <Route path="/settings" component={Settings} />
             <Route path="/@:username/favorites" component={ProfileFavorites} />
             <Route path="/@:username" component={Profile} />
+            <Route path="/response" component={Response} />
           </Switch>
         </div>
       );

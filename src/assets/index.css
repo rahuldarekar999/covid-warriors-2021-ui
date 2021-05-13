@@ -681,3 +681,32 @@ footer .attribution {
   border-radius: 5px;
   color: #fff;
 }
+
+.thank-you-container {
+  min-height: 400px;
+}
+
+.thank-you-wrapper {
+  background: #f1f1f1;
+  padding: 60px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.thank-you-wrapper h1 {
+  color: #333;
+  font-size: 30px;
+  font-weight: 400;
+}
+
+.thank-you-wrapper h3 {
+  color: #333;
+  font-size: 20px;
+  font-weight: 300;
+  margin-bottom: 0;
+}
+
+.praying-hands {
+  color: #fa9234;
+  font-size: 40px;
+}
