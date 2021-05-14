@@ -15,11 +15,11 @@ import './assets/index.css';
 ReactDOM.render((
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      {/* <Router> */}
+      <Router>
         <Switch>
           <Route path="/" component={App} />
         </Switch>
-      {/* </Router> */}
+      </Router>
     </ConnectedRouter>
   </Provider>
 

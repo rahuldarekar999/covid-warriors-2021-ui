@@ -646,11 +646,6 @@ footer .attribution {
   font-size: 26px;
 }
 
-.modal-40w {
-  width: 40%;
-  max-width: none !important;
-}
-
 .files {
   border: 1px solid #ddd;
   background: #f1f1f1;
@@ -703,10 +698,14 @@ footer .attribution {
   color: #333;
   font-size: 20px;
   font-weight: 300;
-  margin-bottom: 0;
+  margin-bottom: 15px;
 }
 
 .praying-hands {
   color: #fa9234;
   font-size: 40px;
+}
+
+.header-link:hover{
+  text-decoration: none;
 }

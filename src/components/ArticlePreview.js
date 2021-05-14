@@ -47,6 +47,7 @@ const ArticlePreview = (props) => {
   };
   const getDate = (time) => {
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    // time = 1621005016;
     d.setUTCSeconds(time);
     // console.log("I am the time : ", d)
     d = moment(d).format("DD/MM/YYYY \xa0 hh:mm a");

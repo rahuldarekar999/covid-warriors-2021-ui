@@ -12,6 +12,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.15.3",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
+    "awesome-phonenumber": "^2.50.0",
     "bootstrap": "^4.6.0",
     "express-http-proxy": "^1.6.2",
     "history": "^4.6.3",

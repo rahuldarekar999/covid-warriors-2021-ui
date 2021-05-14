@@ -5,8 +5,8 @@ import request from "superagent";
 const superagent = superagentPromise(_superagent, global.Promise);
 
 const API_ROOT = "https://conduit.productionready.io/api"; //'http://localost:8080/';
-// const COVID_API_ROOT = '';
-const COVID_API_ROOT = "http://13.233.159.149:8080";
+const COVID_API_ROOT = '';
+// const COVID_API_ROOT = "http://13.233.159.149:8080";
 // 'https://conduit.productionready.io/api';
 
 const encode = encodeURIComponent;
@@ -106,6 +106,12 @@ const Tags = {
   },
   getTwitterData: (data) => {
     return requests.post(`/getTwitterData`, data)
+  },
+  sendConfirm: (data, param) => {
+    return requests.put(`/confirm?p=${encodeURIComponent(param)}`, data)
+  },
+  sendSMS: (data) => {
+    return requests.post(`/sendSms`, data)
   }
 };
 

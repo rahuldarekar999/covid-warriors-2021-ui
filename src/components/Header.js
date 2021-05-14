@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, NavItem, Modal, Button } from "react-bootstrap";
-
+import { NavLink } from "react-router-dom";
 
 import agent from '../agent';
 // import Sidebar from 'react-side-bar';
@@ -183,8 +183,10 @@ class Header extends React.Component {
                     <span class="navbar-toggler-icon"></span>
                   </button> */}
                   <span>
-                    <span><img className={'img-fluid'} width={60} src={flag} /></span>
-                    <span style={{ color: "#ffffff", fontSize: 28, marginLeft: 15 }}>Your Covid Assistant - Innovation That Helps</span>
+                    <NavLink className={'header-link'} to="/">
+                      <span><img className={'img-fluid'} width={60} src={flag} /></span>
+                      <span style={{ color: "#ffffff", fontSize: 28, marginLeft: 15 }}>Your Covid Assistant - Innovation That Helps</span>
+                    </NavLink>
                   </span>
 
                   <Button
