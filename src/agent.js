@@ -107,11 +107,17 @@ const Tags = {
   getTwitterData: (data) => {
     return requests.post(`/getTwitterData`, data)
   },
-  sendConfirm: (data, param) => {
-    return requests.put(`/confirm?p=${encodeURIComponent(param)}`, data)
+  sendConfirm: (data) => {
+    return requests.post(`/confirm`, data)
   },
   sendSMS: (data) => {
     return requests.post(`/sendSms`, data)
+  },
+  getUserMeta: (param) =>{
+    return requests.getResponse(`/user-metadata?p=${encodeURIComponent(param)}`)
+  },
+  getQuestion: (city, category, subCategory) => {
+    return requests.getResponse(`/question?city=${encodeURIComponent(city)}&category=${encodeURIComponent(category)}&subCat=${encodeURIComponent(subCategory)}`)
   }
 };
 

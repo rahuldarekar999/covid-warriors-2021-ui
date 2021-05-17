@@ -709,3 +709,13 @@ footer .attribution {
 .header-link:hover{
   text-decoration: none;
 }
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.blink_me {
+  animation: blinker 2s linear infinite;
+}

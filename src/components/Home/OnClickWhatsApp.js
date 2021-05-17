@@ -114,7 +114,10 @@ export default function OnClickWhatsApp(props) {
             return;
         }
 
-
+        if (selTag == 'MEDICINE' && medicineName === "Other" && !otherMedicine) {
+            alert("Please enter Medicine Name");
+            return;
+        }
 
 
 
@@ -175,10 +178,7 @@ export default function OnClickWhatsApp(props) {
                 break;
         }
 
-        if (selTag == 'MEDICINE' && medicineName === "Other" && !otherMedicine) {
-            alert("Please enter Medicine Name");
-            return;
-        }
+
 
         var request = {
             city: city.value.toUpperCase(),
@@ -231,14 +231,16 @@ export default function OnClickWhatsApp(props) {
 
 
         if (props.toNumbers !== false && props.toNumbers.length > 0) {
-            console.log("I am the to numbers", props.toNumbers);
+            // console.log("I am the to numbers", props.toNumbers);
             //Show the modal window here
             handleShow();
 
             let mobStr = '';
 
             props.toNumbers.map((mo) => {
-                mobStr = mo.mob + ',' + mobStr;
+                if (mo) {
+                    mobStr = mo.mob + ',' + mobStr;
+                }
             })
 
 
@@ -946,7 +948,7 @@ export default function OnClickWhatsApp(props) {
                             })
 
                             setAllGenLink(toMob);
-                        }}>Generate Links</button>
+                        }}>Generate WhatsApp links</button>
                     </div>
 
 
@@ -1049,7 +1051,7 @@ export default function OnClickWhatsApp(props) {
 
                     <Button
                         variant="primary"
-                        disabled={(sendingSMS || (allGenLink && allGenLink.length <= 0)) ? true : false}
+                        disabled={(sendingSMS) ? true : false}
                         onClick={() => { sendSMS(); }}
                         className={"sendMessageBtn"}
                     >{(sendingSMS) && <FontAwesomeIcon className={'rotate-icon'} icon={faSpinner} style={{ color: "#ffffff" }} />} You can also send SMS</Button>

@@ -97,9 +97,9 @@ const MainView = (props) => {
   return (
     <div className="col-md-12">
       <div className={"row"}>
+        <ReachTwitter {...props} />
         <GetHelp {...props} />
         <OnClickWhatsApp {...props} toNumbers={toNumbers} setToNumbers={setToNumbers} />
-        <ReachTwitter {...props} />
         <ExtractNumbers setToNumbers={setToNumbers} {...props}/>
       </div>
 

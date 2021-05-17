@@ -996,7 +996,7 @@ export default function ReachTwitter(props) {
                             <div className={'form-group row'}>
                                 <label className={"col-sm-2 col-form-label"}></label>
                                 <div className={'col-sm-10'}>
-                                    {(twitterLeadsData && twitterLeadsData.length > 0) && <small style={{ fontWeight: 600, display: 'block' }}>Found <strong>{twitterLeadsData.length}</strong> verified lead(s) from Twitter</small>}
+                                    {(twitterLeadsData && twitterLeadsData.length > 0) && <small style={{ fontWeight: 600, display: 'block' }}>Found <strong>{twitterLeadsData.length}</strong> verified lead(s)</small>}
                                     {(noTwitterData) && <small>Sorry, couldn't not find any verified leads</small>}
                                 </div>
                             </div>

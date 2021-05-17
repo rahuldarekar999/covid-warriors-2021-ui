@@ -145,7 +145,7 @@ export default function ExtractNumbers(props) {
 
                     var pn = new PhoneNumber(mb, 'IN');
                     // console.log("I am the phone number::", pn.getNumber( 'international' ))
-                    if (pn.isMobile()) {
+                    if (pn.isValid()) {
                         return ({ mob: `${pn.getCountryCode()}${pn.getNumber('significant')}`, isClicked: false })
                     }
                 })
